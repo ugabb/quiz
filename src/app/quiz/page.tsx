@@ -88,13 +88,13 @@ const Quiz = () => {
                         calculateScore()
                         setIsQuizEnable(false)
                         setIsCompleted(true)
-                    }} disabled={userAnswers.includes(undefined) || userAnswers.length === 0 || userAnswers.length < 10}>Finish!</button>}
+                    }} disabled={userAnswers.includes(undefined) || userAnswers.length === 0 || userAnswers.length < questions.length}>Finish!</button>}
                 </div >
             )}
 
             {isCompleted && <div className="flex flex-col gap-5 justify-center items-center">
                 <h1 className="text-5xl font-bold text-accent">Your Score is {score} 🎉</h1>
-                <button className="btn btn-neutral" onClick={() => {
+                <button className="btn btn-primary" onClick={() => {
                     setIsQuizEnable(true)
                     reset()
                     setTimer(60 * 4)
