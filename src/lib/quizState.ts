@@ -22,17 +22,6 @@ type Quiz = {
 const quizData = [
   {
     question:
-      "Qual é o tipo de dado retornado por `typeof null` em JavaScript?",
-    options: ["undefined", "object", "null", "boolean", "number"],
-    correctAnswer: 1,
-  },
-  {
-    question: "Qual é o resultado de `2 + '2'` em JavaScript?",
-    options: ["4", "22", "NaN", "undefined", "TypeError"],
-    correctAnswer: 1,
-  },
-  {
-    question:
       "Qual das seguintes palavras-chave é usada para definir uma variável em JavaScript?",
     options: [
       "var",
