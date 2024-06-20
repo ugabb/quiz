@@ -4,15 +4,18 @@ import { useEffect, useState } from "react"
 import { PiArrowLeft, PiArrowRight } from "react-icons/pi"
 import FormEnd from "../components/FormEnd"
 import toast from "react-hot-toast"
+import { useRouter } from "next/navigation"
 
 type Timeout = ReturnType<typeof setInterval>
 
 const Quiz = () => {
-    const [isQuizEnable, setIsQuizEnable] = useState(false);
-    const [isCompleted, setIsCompleted] = useState(false)
+    const [isQuizEnable, setIsQuizEnable] = useState<boolean>(false);
+    const [isCompleted, setIsCompleted] = useState<boolean>(false)
+    const [isAuthorized, setIsAuthorized] = useState<boolean>(false)
     const [timer, setTimer] = useState(60 * 4) // 4 minutos
-    const { score, questions, currentQuestionIndex, setAnswer, removeAnswer, nextQuestion, backQuestion, userAnswers, calculateScore, reset } = useQuiz()
+    const { questions, currentQuestionIndex, setAnswer, removeAnswer, nextQuestion, backQuestion, userAnswers, calculateScore } = useQuiz()
 
+    const router = useRouter()
 
     useEffect(() => {
         let interval: Timeout;
@@ -52,7 +55,7 @@ const Quiz = () => {
 
                         <div className="flex justify-between items-center w-full">
 
-                            <h1 className="text-3xl font-bold">Question {currentQuestionIndex + 1}</h1>
+                            <h1 className="text-3xl font-bold">Questão {currentQuestionIndex + 1}</h1>
                             <p>{currentQuestionIndex + 1}/{questions.length}</p>
                         </div>
 
@@ -94,7 +97,7 @@ const Quiz = () => {
                         calculateScore()
                         setIsQuizEnable(false)
                         setIsCompleted(true)
-                    }} disabled={userAnswers.includes(undefined) || userAnswers.length === 0 || userAnswers.length < questions.length}>Finish!</button>}
+                    }} disabled={userAnswers.includes(undefined) || userAnswers.length === 0 || userAnswers.length < questions.length}>Terminar!</button>}
                 </div >
             )}
 
@@ -107,18 +110,16 @@ const Quiz = () => {
                         <p className="py-4">exemplo, nomes, números, códigos de identificação, endereços, característica, dentre outras. O CNVV realiza o tratamento de dados pessoais nos moldes previstos nos artigos 6º e 7º da Lei nº 13.709/2018, observando a boa-fé e todos os seus princípios, especialmente dentro da sua finalidade do tratamento para propósitos legítimos, específicos, explícitos e informados antecipadamente ao seu titular, com exatidão, clareza, relevância e atualização dos dados, de acordo com a necessidade para o cumprimento da finalidade de seu tratamento.
                             2. Consentimento:
                             Ao utilizar nossos serviços, você concorda expressamente com a coleta, armazenamento e tratamento dos seus dados pessoais, conforme descrito neste documento.</p>
-                        <form>
-                            <label className="label justify-start gap-3">
-                                <input type="checkbox" className="checkbox checkbox-primary" />
-                                <span className="label-text">Confirmo que as informações acima estão corretas</span>
-                            </label>
-
-                        </form>
                         <div className="modal-action">
-                            <form method="dialog" className="flex gap-3 mx-auto">
-                                {/* if there is a button in form, it will close the modal */}
-                                <button className="btn btn-primary">Aceitar</button>
-                                <button className="btn">Recusar</button>
+                            <form method="dialog" className="flex flex-col gap-3 mx-auto w-full">
+                                <label className="label justify-start gap-3">
+                                    <input type="checkbox" onChange={() => setIsAuthorized(prev => !prev)} className="checkbox checkbox-primary" />
+                                    <span className="label-text">Confirmo que as informações acima estão corretas</span>
+                                </label>
+                                <div className="flex gap-3 items-center justify-center">
+                                    <button className="btn btn-primary" disabled={!isAuthorized} >Aceitar</button>
+                                    <button className="btn" onClick={() => router.push("/")}>Recusar</button>
+                                </div>
                             </form>
                         </div>
                     </div>

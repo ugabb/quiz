@@ -7,10 +7,11 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 import { useState } from "react";
 import { isValidCEP } from "@brazilian-utils/brazilian-utils";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 const formSchema = z.object({
     name: z.string().min(1, { message: 'Nome é obrigatório' }),
-    email: z.string().email().min(1, { message: 'Email é obrigatório' }),
+    email: z.string().email({ message: 'Email inválido' }).min(1, { message: 'Email é obrigatório' }),
     phone: z.string().min(15, { message: 'Telefone incorreto' }).max(15, { message: 'Telefone incorreto' }),
     address: z.object({
         district: z.string(),
@@ -18,10 +19,10 @@ const formSchema = z.object({
         street: z.string(),
         state: z.string(),
         number: z.coerce.string().min(1, { message: "O número é obrigatório" }),
-        cep: z.string().min(8).max(9)
+        cep: z.string().min(8, { message: "CEP deve ter no mínimo 8 caracteres" }).max(9, { message: "CEP deve ter no máximo 9 caracteres" })
     }),
-    hasCarInsurance: z.boolean(),
-    lastMaintenance: z.string()
+    hasCarInsurance: z.string({ message: 'Seguro automotivo é obrigatório' }),
+    lastMaintenance: z.string().min(1, { message: 'Última manutenção é obrigatória' })
 })
 
 type FormType = z.infer<typeof formSchema>
@@ -52,7 +53,7 @@ const FormEnd = () => {
     const [address, setAddress] = useState<Address | null>(null);
 
     const { register, handleSubmit, formState: { errors }, setValue, getValues } = useForm<FormType>({
-        // resolver: zodResolver(formSchema),
+        resolver: zodResolver(formSchema),
         defaultValues: {
             address: {
                 cep: '',
@@ -167,7 +168,7 @@ const FormEnd = () => {
                         </label>
                         <label className="form-control w-full">
                             <span className="label-text">Email</span>
-                            <input {...register("email")} type="text" placeholder="johndoe@mail.com" className="input input-bordered w-full text-zinc-900" />
+                            <input {...register("email", { required: 'Email é obrigatório' })} type="text" placeholder="johndoe@mail.com" className="input input-bordered w-full text-zinc-900" />
                             {errors.email && <span className="text-sm text-red-500">{errors.email.message}</span>}
                         </label>
                         <label className="form-control w-full">
@@ -231,6 +232,8 @@ const FormEnd = () => {
                             <input type="radio" className="radio radio-primary" {...register("hasCarInsurance")} />
                             <span className="label-text">Não</span>
                         </label>
+                        {errors.hasCarInsurance && <span className="text-sm text-red-500">{errors.hasCarInsurance.message}</span>}
+
                     </div>
 
 
