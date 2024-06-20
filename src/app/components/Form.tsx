@@ -8,11 +8,11 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 
 const formSchema = z.object({
-    uf: z.string(),
-    city: z.string(),
-    ecv: z.string(),
+    uf: z.string({message: "Estado é obrigatório"}),
+    city: z.string({message: "Cidade é obrigatória"}),
+    ecv: z.string({message: "ECV é obrigatório"}),
     name: z.string().min(1, { message: 'Nome é obrigatório' }),
-    email: z.string().email().min(1, { message: 'Email é obrigatório' }),
+    email: z.string().email({ message: 'Email inválido' }).min(1, { message: 'Email é obrigatório' }),
     phone: z.string().min(15, { message: 'Telefone incorreto' }).max(15, { message: 'Telefone incorreto' })
 })
 
@@ -23,7 +23,7 @@ const Form = () => {
     const [cities, setCities] = useState<{ id: number; nome: string }[]>([]);
     const [dataIsCorrect, setDataIsCorrect] = useState(false);
 
-    const { register, handleSubmit, formState: { errors } } = useForm<FormType>({
+    const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<FormType>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             uf: '',
@@ -51,11 +51,12 @@ const Form = () => {
     const router = useRouter()
 
     const SubmitForm = (data: FormType) => {
+        toast.loading("Enviando dados. Aguarde!",{duration: 3000})
+        console.log(data)
         setTimeout(() => {
-            toast.loading("Enviando dados. Aguarde!")
+            router.push("/quiz")
+            toast.success("Dados enviado com sucesso!")
          }, 3000)
-        router.push("/quiz")
-        toast.success("Dados enviado com sucesso!")
     }
 
 
@@ -78,10 +79,10 @@ const Form = () => {
                 <div className="label">
                     <span className="label-text">Estados</span>
                 </div>
-                <select className="select select-neutral w-full" {...register("uf")} defaultValue="#" onChange={(e) => handleFethcCity(e.target.value)}>
+                <select className="select select-neutral w-full" {...register("uf", {required: true})} defaultValue="#" onChange={(e) => handleFethcCity(e.target.value)}>
                     <option disabled value="#">Selecione o estado</option>
                     {ufs.map(uf => (
-                        <option key={uf.id}>{uf.sigla}</option>
+                        <option key={uf.id} value={uf.sigla}>{uf.sigla}</option>
                     ))}
                 </select>
                 {errors.uf && <span className="text-sm text-red-500">{errors.uf.message}</span>}
@@ -90,7 +91,7 @@ const Form = () => {
                 <div className="label">
                     <span className="label-text">Cidades</span>
                 </div>
-                <select className="select select-neutral w-full" {...register("city")} defaultValue="#">
+                <select className="select select-neutral w-full" {...register("city",{required: true})} defaultValue="#">
                     <option disabled value="#">Selecione a cidade</option>
                     {cities.map(city => (
                         <option key={city.id}>{city.nome}</option>
@@ -102,7 +103,7 @@ const Form = () => {
                 <div className="label">
                     <span className="label-text">ECV</span>
                 </div>
-                <select className="select select-neutral w-full" {...register("ecv")} defaultValue="#">
+                <select className="select select-neutral w-full" {...register("ecv",{required: true})} defaultValue="#">
                     <option disabled value="#">ECV</option>
                     <option>ECV Exemplo</option>
                 </select>
@@ -134,7 +135,7 @@ const Form = () => {
                 </div>
             )}
 
-            <button disabled={!dataIsCorrect} type="submit" className="btn btn-primary">Enviar</button>
+            <button disabled={!dataIsCorrect || isSubmitting} type="submit" className="btn btn-primary">Enviar</button>
         </form>
     )
 }
