@@ -2,6 +2,7 @@
 import { useQuiz } from "@/lib/quizState"
 import { useEffect, useState } from "react"
 import { PiArrowLeft, PiArrowRight } from "react-icons/pi"
+import FormEnd from "../components/FormEnd"
 
 type Timeout = ReturnType<typeof setInterval>
 
@@ -33,8 +34,8 @@ const Quiz = () => {
         <div className="min-h-screen flex justify-center items-center">
             {!isQuizEnable && !isCompleted && (
                 <div className="flex flex-col gap-5 w-[600px]">
-                    <h1 className="text-3xl font-bold">VOCÊ É UM CONDUTOR EXEMPLAR? TESTE AQUI!</h1>
-                    <p>
+                    <h1 className="text-3xl text-center font-bold">VOCÊ É UM CONDUTOR EXEMPLAR? TESTE AQUI!</h1>
+                    <p className="text-zinc-500">
                         Este quiz serve tanto para condutores experientes quanto para iniciantes, proporcionando uma oportunidade divertida e educativa para todos melhorarem a sua consciência sobre segurança no trânsito. Boa sorte e boa viagem!</p>
                     <button className="btn btn-accent text-white" onClick={() => setIsQuizEnable(true)}>Começar teste</button>
                 </div>
@@ -93,13 +94,30 @@ const Quiz = () => {
             )}
 
             {isCompleted && <div className="flex flex-col gap-5 justify-center items-center">
-                <h1 className="text-5xl font-bold text-accent">Your Score is {score} 🎉</h1>
-                <button className="btn btn-primary" onClick={() => {
-                    setIsQuizEnable(true)
-                    reset()
-                    setTimer(60 * 4)
-                    setIsCompleted(false)
-                }}>Reset</button>
+                <FormEnd />
+
+                <dialog open={isCompleted} id="my_modal_1" className="modal">
+                    <div className="modal-box">
+                        <h3 className="font-bold text-lg">ACORDO DE POLÍTICA DE PRIVACIDADE</h3>
+                        <p className="py-4">exemplo, nomes, números, códigos de identificação, endereços, característica, dentre outras. O CNVV realiza o tratamento de dados pessoais nos moldes previstos nos artigos 6º e 7º da Lei nº 13.709/2018, observando a boa-fé e todos os seus princípios, especialmente dentro da sua finalidade do tratamento para propósitos legítimos, específicos, explícitos e informados antecipadamente ao seu titular, com exatidão, clareza, relevância e atualização dos dados, de acordo com a necessidade para o cumprimento da finalidade de seu tratamento.
+                            2. Consentimento:
+                            Ao utilizar nossos serviços, você concorda expressamente com a coleta, armazenamento e tratamento dos seus dados pessoais, conforme descrito neste documento.</p>
+                        <form>
+                            <label className="label justify-start gap-3">
+                                <input type="checkbox" className="checkbox checkbox-primary" />
+                                <span className="label-text">Confirmo que as informações acima estão corretas</span>
+                            </label>
+
+                        </form>
+                        <div className="modal-action">
+                            <form method="dialog" className="flex gap-3 mx-auto">
+                                {/* if there is a button in form, it will close the modal */}
+                                <button className="btn btn-primary">Aceitar</button>
+                                <button className="btn">Recusar</button>
+                            </form>
+                        </div>
+                    </div>
+                </dialog>
             </div>}
         </div >
     )

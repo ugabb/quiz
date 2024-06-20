@@ -51,8 +51,11 @@ const Form = () => {
     const router = useRouter()
 
     const SubmitForm = (data: FormType) => {
+        setTimeout(() => {
+            toast.loading("Enviando dados. Aguarde!")
+         }, 3000)
         router.push("/quiz")
-        toast.success("Formulário enviado com sucesso!")
+        toast.success("Dados enviado com sucesso!")
     }
 
 
@@ -70,7 +73,7 @@ const Form = () => {
     }
 
     return (
-        <form className="flex flex-col gap-3 w-full" onSubmit={handleSubmit(SubmitForm)}>
+        <form className="flex flex-col gap-3 w-full py-10" onSubmit={handleSubmit(SubmitForm)}>
             <label className="form-control w-full text-zinc-900">
                 <div className="label">
                     <span className="label-text">Estados</span>
