@@ -18,6 +18,7 @@ const QuizResult = (props: Props) => {
         <div className="card w-96 h-96 bg-base-100">
           <div className="card-body justify-between items-center">
             <h2 className="card-title text-zinc-500">Seu Resultado!</h2>
+            {/* @ts-ignore */}
             <div className="radial-progress text-accent" style={{ "--value": score / questions.length * 100, "--size": "12rem" }} role="progressbar">
               {Math.floor(score / questions.length * 100)}%
             </div>
@@ -33,6 +34,7 @@ const QuizResult = (props: Props) => {
         <div className='flex flex-col md:grid md:grid-cols-2 lg:grid-cols-3 gap-5 justify-center items-center'>
           {questions.map((question, index) => (
             <AnswerCard
+              key={index}
               options={question.options}
               question={question.question}
               userAnswer={userAnswers[index]}

@@ -4,24 +4,64 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import axios from "axios";
+import { useState } from "react";
+import { isValidCEP } from "@brazilian-utils/brazilian-utils";
 
 const formSchema = z.object({
     name: z.string().min(1, { message: 'Nome é obrigatório' }),
     email: z.string().email().min(1, { message: 'Email é obrigatório' }),
     phone: z.string().min(15, { message: 'Telefone incorreto' }).max(15, { message: 'Telefone incorreto' }),
-    cep: z.string().min(8).max(9),
+    address: z.object({
+        district: z.string(),
+        city: z.string(),
+        street: z.string(),
+        state: z.string(),
+        number: z.coerce.string().min(1, { message: "O número é obrigatório" }),
+        cep: z.string().min(8).max(9)
+    }),
     hasCarInsurance: z.boolean(),
     lastMaintenance: z.string()
 })
 
 type FormType = z.infer<typeof formSchema>
 
-const FormEnd = () => {
+export interface AddressResponse {
+    cep: string;
+    logradouro: string;
+    complemento: string;
+    bairro: string;
+    localidade: string;
+    uf: string;
+    ibge: string;
+    gia: string;
+    ddd: string;
+    siafi: string;
+}
 
-    const { register, handleSubmit, formState: { errors } } = useForm<FormType>({
+export interface Address {
+    district: string;
+    city: string;
+    street: string;
+    state: string;
+    cep: string;
+}
+
+
+const FormEnd = () => {
+    const [address, setAddress] = useState<Address | null>(null);
+
+    const { register, handleSubmit, formState: { errors }, setValue, getValues } = useForm<FormType>({
         // resolver: zodResolver(formSchema),
         defaultValues: {
-            cep: '',
+            address: {
+                cep: '',
+                city: '',
+                district: '',
+                state: '',
+                street: '',
+                number: '',
+            },
             email: '',
             name: '',
             phone: '',
@@ -32,7 +72,8 @@ const FormEnd = () => {
     const router = useRouter()
 
     const SubmitForm = (data: FormType) => {
-        toast.loading("Enviando dados. Aguarde!",{
+        console.log(data)
+        toast.loading("Enviando dados. Aguarde!", {
             duration: 3000
         })
         setTimeout(() => {
@@ -41,6 +82,39 @@ const FormEnd = () => {
         }, 3000)
     }
 
+
+    const handleGetCEP = async (cep: string) => {
+        if (cep.length < 9) return;
+        console.log(cep);
+
+        if (cep) {
+            const response = await axios.get(`https://viacep.com.br/ws/${cep}/json/`)
+            console.log(response);
+
+            if (response.data.erro) {
+                toast.error("CEP inválido ou não existe!")
+            }
+
+            const addressResponse: AddressResponse = response.data
+            setValue('address', {
+                cep: addressResponse.cep,
+                city: addressResponse.localidade,
+                district: addressResponse.bairro,
+                state: addressResponse.uf,
+                street: addressResponse.logradouro,
+                number: ""
+            });
+            setAddress({
+                cep: addressResponse.cep,
+                city: addressResponse.localidade,
+                district: addressResponse.bairro,
+                state: addressResponse.uf,
+                street: addressResponse.logradouro,
+            })
+        } else {
+            toast.error("CEP inválido")
+        }
+    }
 
     const handleCep = (event: any) => {
         let input = event.target
@@ -71,6 +145,15 @@ const FormEnd = () => {
         return value
     }
 
+    const formatNumero = (numero: string) => {
+        if (!numero) return ""
+
+        // Remove todos os caracteres que não são dígitos
+        numero = numero.replace(/\D/g, '')
+
+        return numero
+    };
+
     return (
         <div className="card bg-zinc-100 text-primary-content max-w-lg  flex flex-col gap-5 justify-center items-center">
             <div className="card-body">
@@ -94,9 +177,48 @@ const FormEnd = () => {
                         </label>
                         <label className="form-control w-full">
                             <span className="label-text">CEP</span>
-                            <input {...register("cep")} type="text" placeholder="77777-77" className="input input-bordered w-full text-zinc-900" onChange={(e) => handleCep(e)} />
-                            {errors.cep && <span className="text-sm text-red-500">{errors.cep.message}</span>}
+                            <input {...register("address.cep")} type="text" placeholder="77777-77" className="input input-bordered w-full text-zinc-900" onChange={(e) => {
+                                let input = e.target
+                                input.value = formatCEP(input.value)
+                                if (isValidCEP(e.target.value)) {
+                                    handleGetCEP(e.target.value)
+                                }
+
+                            }} />
+                            {errors?.address?.cep && <span className="text-sm text-red-500">{errors.address.cep.message}</span>}
                         </label>
+                        {address && (
+                            <div className="flex flex-col gap-3">
+                                <label className="form-control w-full">
+                                    <span className="label-text">Endereço</span>
+                                    <input {...register("address.street")} type="text" className="input input-bordered w-full text-zinc-900" />
+                                    {errors?.address?.street && <span className="text-sm text-red-500">{errors.address.street.message}</span>}
+                                </label>
+                                <label className="form-control w-full">
+                                    <span className="label-text">Número</span>
+                                    <input {...register("address.number")} type="text" className="input input-bordered w-full text-zinc-900" onChange={(e) => {
+                                        let input = e.target
+                                        input.value = formatNumero(input.value)
+                                    }} />
+                                    {errors?.address?.number && <span className="text-sm text-red-500">{errors.address.number.message}</span>}
+                                </label>
+                                <label className="form-control w-full">
+                                    <span className="label-text">Cidade</span>
+                                    <input {...register("address.city")} type="text" className="input input-bordered w-full text-zinc-900" />
+                                    {errors?.address?.city && <span className="text-sm text-red-500">{errors.address.city.message}</span>}
+                                </label>
+                                <label className="form-control w-full">
+                                    <span className="label-text">Bairro</span>
+                                    <input {...register("address.district")} type="text" className="input input-bordered w-full text-zinc-900" />
+                                    {errors?.address?.district && <span className="text-sm text-red-500">{errors.address.district.message}</span>}
+                                </label>
+                                <label className="form-control w-full">
+                                    <span className="label-text">Estado</span>
+                                    <input {...register("address.state")} type="text" className="input input-bordered w-full text-zinc-900" />
+                                    {errors?.address?.state && <span className="text-sm text-red-500">{errors.address.state.message}</span>}
+                                </label>
+                            </div>
+                        )}
                     </div>
 
                     <div className="flex flex-col gap-3">
@@ -116,7 +238,7 @@ const FormEnd = () => {
 
                     <label className="form-control w-full text-zinc-900">
                         <div className="label">
-                            <span className="label-text">Estados</span>
+                            <span className="label-text">Última Manutenção</span>
                         </div>
                         <select className="select select-neutral w-full" {...register("lastMaintenance")} defaultValue="#">
                             <option disabled value="#">Selecione</option>
