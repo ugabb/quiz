@@ -31,7 +31,7 @@ const Quiz = () => {
     }, [isQuizEnable])
 
     return (
-        <div className="min-h-screen flex justify-center items-center">
+        <div className="min-h-screen flex justify-center items-center p-10">
             {!isQuizEnable && !isCompleted && (
                 <div className="flex flex-col gap-5 w-[600px]">
                     <h1 className="text-3xl text-center font-bold">VOCÊ É UM CONDUTOR EXEMPLAR? TESTE AQUI!</h1>
