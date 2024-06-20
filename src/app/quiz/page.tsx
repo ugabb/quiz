@@ -3,13 +3,14 @@ import { useQuiz } from "@/lib/quizState"
 import { useEffect, useState } from "react"
 import { PiArrowLeft, PiArrowRight } from "react-icons/pi"
 import FormEnd from "../components/FormEnd"
+import toast from "react-hot-toast"
 
 type Timeout = ReturnType<typeof setInterval>
 
 const Quiz = () => {
     const [isQuizEnable, setIsQuizEnable] = useState(false);
     const [isCompleted, setIsCompleted] = useState(false)
-    const [timer, setTimer] = useState(60 * 4) // 60 seconds timer
+    const [timer, setTimer] = useState(60 * 4) // 4 minutos
     const { score, questions, currentQuestionIndex, setAnswer, removeAnswer, nextQuestion, backQuestion, userAnswers, calculateScore, reset } = useQuiz()
 
 
@@ -22,6 +23,7 @@ const Quiz = () => {
                     clearInterval(interval)
                     calculateScore()
                     setIsQuizEnable(false)
+                    toast.error("Tempo esgotado!")
                     return 0
                 })
             }, 1000)
@@ -42,15 +44,18 @@ const Quiz = () => {
             )}
             {isQuizEnable && (
                 <div className="flex flex-col gap-5 w-[600px]">
+                    {/* @ts-ignore */}
+                    <div className="mx-auto md:absolute md:top-24 md:right-20 lg:right-56 radial-progress text-primary flex items-center justify-center text-center text-sm" style={{ "--value": (timer / (60 * 4)) * 100, "--size": "6rem", "--thickness": "3px" }} role="progressbar">
+                        {Math.floor(timer / 60)}min {timer % 60} segundos
+                    </div>
                     <div className="flex justify-between items-center">
+
                         <div className="flex justify-between items-center w-full">
+
                             <h1 className="text-3xl font-bold">Question {currentQuestionIndex + 1}</h1>
                             <p>{currentQuestionIndex + 1}/{questions.length}</p>
                         </div>
-                        {/* @ts-ignore */}
-                        <div className="absolute top-20 right-80 radial-progress text-primary flex items-center justify-center text-center text-sm" style={{ "--value": (timer / (60 * 4)) * 100, "--size": "6rem", "--thickness": "3px" }} role="progressbar">
-                            {Math.floor(timer / 60)}min {timer % 60} segundos
-                        </div>
+
 
                     </div>
                     <h1 className="">{questions[currentQuestionIndex].question}</h1>
