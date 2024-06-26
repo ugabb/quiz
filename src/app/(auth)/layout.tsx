@@ -10,7 +10,8 @@ export default function AuthLayout({
       <section className="w-full h-full object-cover">
         <Image className="w-full h-full object-cover" src="/vistoria.jpg" alt="Logo" width={2000} height={1333} />
       </section>
-      <section className="w-full">
+      <section className="flex flex-col justify-center items-center w-full">
+        <Image src="/cnvv-logo.png" alt="Logo" width={200} height={200} />
         {children}
       </section>
     </section>
