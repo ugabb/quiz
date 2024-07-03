@@ -124,7 +124,7 @@ const Form = () => {
                     </label>
                     <label className="form-control w-full">
                         <span className="label-text">Telefone</span>
-                        <input {...register("phone")} type="text" placeholder="(99) 99999-9999" className="input input-bordered w-full text-zinc-900" onChange={(e) => handlePhone(e)} />
+                        <input {...register("phone")} type="text" placeholder="(99) 99999-9999" className="input input-bordered w-full text-zinc-900" onChange={(e) => handlePhone(e)} maxLength={15} />
                         {errors.phone && <span className="text-sm text-red-500">{errors.phone.message}</span>}
                     </label>
                     <label className="form-control w-full">
