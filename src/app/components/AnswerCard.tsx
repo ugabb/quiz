@@ -15,7 +15,7 @@ const AnswerCard = ({ options, question, userAnswer, correctAnswer }: Props) => 
                 {options.map((option, index) => (
                     <button
                         key={index}
-                        className={`btn ${userAnswer !== undefined && index === correctAnswer ? "bg-accent text-white" : ""} ${userAnswer !== undefined && index === userAnswer && index !== correctAnswer ? "bg-red-500 text-white" : ""}`}
+                        className={`btn ${userAnswer !== undefined && index === correctAnswer ? "bg-emerald-500 text-white" : ""} ${userAnswer !== undefined && index === userAnswer && index !== correctAnswer ? "bg-red-500 text-white" : ""}`}
                     >
                         {option}
                     </button>))}

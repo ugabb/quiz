@@ -4,6 +4,8 @@ import { TableCell, TableRow } from "@/components/ui/table";
 import { useQuiz } from "@/lib/quizState";
 
 import { TableItem, tableItems } from "./mock-table-data";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import Link from "next/link";
 
 export function RegisterTableRow(props: TableItem) {
   const { questions, score } = useQuiz();
@@ -15,7 +17,15 @@ export function RegisterTableRow(props: TableItem) {
           {props.enviadoEm}
         </TableCell>
         <TableCell className="text-center text-xs text-zinc-600 whitespace-nowrap p-4">
-          {props.resultadoQuiz}
+          <Tooltip>
+            <TooltipTrigger>
+              {props.resultadoQuiz}
+            </TooltipTrigger>
+            <TooltipContent className="hover:bg-emerald-500">
+              <Link href={`/quiz/result/${props.id}`} className="">Ver respostas</Link>
+            </TooltipContent>
+          </Tooltip>
+
         </TableCell>
         <TableCell className="text-xs text-zinc-600 whitespace-nowrap p-4">
           {props.cliente}
