@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
-import Image from "next/image";
+import {
+  TooltipProvider,
+} from "@/components/ui/tooltip"
 import Header from "./components/Header";
 import AuthProvider from "./components/AuthProvider";
 
@@ -23,8 +25,11 @@ export default function RootLayout({
       <body className={inter.className}>
         <AuthProvider>
           <Header />
-          {children}
+          <TooltipProvider>
+            {children}
+          </TooltipProvider>
           <Toaster />
+
         </AuthProvider>
       </body>
     </html>

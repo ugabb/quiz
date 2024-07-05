@@ -77,7 +77,8 @@ const Dashboard = () => {
             <TableBody>
               {tableItems.map((item, index) => (
                 <RegisterTableRow
-                  key={index}
+                  id={item.id}
+                  key={item.id}
                   bairro={item.bairro}
                   cep={item.cep}
                   cliente={item.cliente}
