@@ -38,7 +38,7 @@ const ModalResult = ({ userId }: ModalResultProps) => {
 
                     </div>
                 </div>
-                <div className='flex flex-col justify-center items-center'>
+                <div className='flex flex-col justify-center items-center gap-5'>
                     {questions.map((question, index) => (
                         <AnswerCard
                             key={index}
