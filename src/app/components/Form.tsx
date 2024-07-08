@@ -19,7 +19,7 @@ const formSchema = z.object({
 type FormType = z.infer<typeof formSchema>
 
 const Form = () => {
-    const [ufs, setUfs] = useState<{ id: number; sigla: string }[]>([]);
+    const [ufs, setUfs] = useState<{ id: number; sigla: string; nome: string }[]>([]);
     const [cities, setCities] = useState<{ id: number; nome: string }[]>([]);
     const [dataIsCorrect, setDataIsCorrect] = useState(false);
 
@@ -34,13 +34,19 @@ const Form = () => {
 
     const handleFethcUfs = async () => {
         const response = await fetch('https://servicodados.ibge.gov.br/api/v1/localidades/estados');
+        const compareStrings = (a: {nome: string}, b: {nome: string}) => a.nome.localeCompare(b.nome);
+
         const data = await response.json();
-        setUfs(data);
+
+        setUfs(data.sort(compareStrings));
     }
     const handleFethcCity = async (uf: string) => {
         const response = await fetch(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${uf}/municipios`);
+        const compareStrings = (a: {nome: string}, b: {nome: string}) => a.nome.localeCompare(b.nome);
+
         const data = await response.json();
-        setCities(data);
+
+        setCities(data.sort(compareStrings));
     }
 
     useEffect(() => {
@@ -58,7 +64,6 @@ const Form = () => {
             toast.success("Dados enviado com sucesso!")
          }, 3000)
     }
-
 
     const handlePhone = (event: any) => {
         let input = event.target
@@ -80,9 +85,9 @@ const Form = () => {
                     <span className="label-text">Estados</span>
                 </div>
                 <select className="select select-neutral w-full" {...register("uf", {required: true})} defaultValue="#" onChange={(e) => handleFethcCity(e.target.value)}>
-                    <option disabled value="#">Selecione o estado</option>
+                    <option value="#">Selecione o estado</option>
                     {ufs.map(uf => (
-                        <option key={uf.id} value={uf.sigla}>{uf.sigla}</option>
+                        <option key={uf.id} value={uf.sigla}>{uf.nome}</option>
                     ))}
                 </select>
                 {errors.uf && <span className="text-sm text-red-500">{errors.uf.message}</span>}
@@ -92,7 +97,7 @@ const Form = () => {
                     <span className="label-text">Cidades</span>
                 </div>
                 <select className="select select-neutral w-full" {...register("city",{required: true})} defaultValue="#">
-                    <option disabled value="#">Selecione a cidade</option>
+                    <option value="#">Selecione a cidade</option>
                     {cities.map(city => (
                         <option key={city.id}>{city.nome}</option>
                     ))}
@@ -135,7 +140,7 @@ const Form = () => {
                 </div>
             )}
 
-            <button disabled={!dataIsCorrect || isSubmitting} type="submit" className="btn btn-primary">Enviar</button>
+            <button disabled={!dataIsCorrect || isSubmitting} type="submit" className="btn btn-primary">Receber Material por Email</button>
         </form>
     )
 }

@@ -18,8 +18,10 @@ const formSchema = z.object({
         city: z.string(),
         street: z.string(),
         state: z.string(),
-        number: z.coerce.string().min(1, { message: "O número é obrigatório" }),
-        cep: z.string().min(8, { message: "CEP deve ter no mínimo 8 caracteres" }).max(9, { message: "CEP deve ter no máximo 9 caracteres" })
+        number: z.coerce.string().optional(),
+        cep: z.string()
+            .min(8, { message: "CEP deve ter no mínimo 8 caracteres" })
+            .max(9, { message: "CEP deve ter no máximo 9 caracteres" })
     }),
     hasCarInsurance: z.string({ message: 'Seguro automotivo é obrigatório' }),
     lastMaintenance: z.string().min(1, { message: 'Última manutenção é obrigatória' })
@@ -82,7 +84,6 @@ const FormEnd = () => {
             router.push("/quiz/result")
         }, 3000)
     }
-
 
     const handleGetCEP = async (cep: string) => {
         if (cep.length < 9) return;
@@ -184,7 +185,6 @@ const FormEnd = () => {
                                 if (isValidCEP(e.target.value)) {
                                     handleGetCEP(e.target.value)
                                 }
-
                             }} />
                             {errors?.address?.cep && <span className="text-sm text-red-500">{errors.address.cep.message}</span>}
                         </label>
@@ -233,10 +233,7 @@ const FormEnd = () => {
                             <span className="label-text">Não</span>
                         </label>
                         {errors.hasCarInsurance && <span className="text-sm text-red-500">{errors.hasCarInsurance.message}</span>}
-
                     </div>
-
-
 
 
                     <label className="form-control w-full text-zinc-900">

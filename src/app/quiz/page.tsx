@@ -111,7 +111,7 @@ const Quiz = () => {
                             2. Consentimento:
                             Ao utilizar nossos serviços, você concorda expressamente com a coleta, armazenamento e tratamento dos seus dados pessoais, conforme descrito neste documento.</p>
                         <div className="modal-action">
-                            <form method="dialog" className="flex flex-col gap-3 mx-auto w-full">
+                            <form method="dialog" className="flex flex-col gap-3 mx-auto">
                                 <label className="label justify-start gap-3">
                                     <input type="checkbox" onChange={() => setIsAuthorized(prev => !prev)} className="checkbox checkbox-primary" />
                                     <span className="label-text">Confirmo que as informações acima estão corretas</span>

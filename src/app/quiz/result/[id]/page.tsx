@@ -14,7 +14,6 @@ const QuizResult = (props: Props) => {
   const { id } = useParams();
   const uAnserws = tableItems.find((item) => item.id === Number(id))?.userAnswers
   const uScore = tableItems.find((item) => item.id === Number(id))?.resultadoQuiz
-  console.log(uAnserws, userAnswers)
 
   return (
     <div className='flex flex-col items-center gap-5 justify-center my-20'>
