@@ -5,7 +5,17 @@ import { useQuiz } from "@/lib/quizState";
 
 import { TableItem, tableItems } from "./mock-table-data";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import Link from "next/link";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { useState } from "react";
+import QuizResult from "../quiz/result/page";
+import ModalResult from "../components/ModalResult";
 
 export function RegisterTableRow(props: TableItem) {
   const { questions, score } = useQuiz();
@@ -17,14 +27,21 @@ export function RegisterTableRow(props: TableItem) {
           {props.enviadoEm}
         </TableCell>
         <TableCell className="text-center text-xs text-zinc-600 whitespace-nowrap p-4">
-          <Tooltip>
-            <TooltipTrigger>
-              {props.resultadoQuiz}
-            </TooltipTrigger>
-            <TooltipContent className="hover:bg-emerald-500">
-              <Link href={`/quiz/result/${props.id}`} className="">Ver respostas</Link>
-            </TooltipContent>
-          </Tooltip>
+          <Dialog >
+            <Tooltip>
+              <TooltipTrigger>
+                {props.resultadoQuiz}
+              </TooltipTrigger>
+              <TooltipContent className="hover:bg-emerald-500">
+                <DialogTrigger>Ver respostas</DialogTrigger>
+              </TooltipContent>
+            </Tooltip>
+            <DialogContent className="w-full h-[800px] flex flex-col overflow-y-scroll ">
+              <DialogHeader>
+                <ModalResult userId={props.id}/>
+              </DialogHeader>
+            </DialogContent>
+          </Dialog>
 
         </TableCell>
         <TableCell className="text-xs text-zinc-600 whitespace-nowrap p-4">

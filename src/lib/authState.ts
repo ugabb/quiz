@@ -16,7 +16,14 @@ type Auth = {
 };
 
 export const useAuthState = create<Auth>((set, get) => ({
-  users: [],
+  users: [
+    {
+      id: Math.random().toString(),
+      email: "naruto@gmail.com",
+      password: "1234",
+      name:"Naruto Uzumaki",
+    },
+  ],
   currentUser: null,
   login: (email, password) => {
     const { users } = get();

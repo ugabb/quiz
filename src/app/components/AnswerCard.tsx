@@ -7,7 +7,7 @@ type Props = {
     userAnswer: number | undefined;
 }
 
-const AnswerCard = ({ options, question, userAnswer, correctAnswer }: Props) => {
+const AnswerCard = ({ options, question, userAnswer, correctAnswer, ...props }: Props) => {
     return (
         <div className="card w-96 bg-base-100 shadow-xl">
             <div className="card-body">
